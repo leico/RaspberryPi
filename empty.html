@@ -534,18 +534,36 @@ hdmi_mode=87
 hdmi_ignore_edid=0xa5000080
 }}}</pre>
 </div>
-<div title="MainMenu" creator="leico" modifier="YourName" created="201108040628" modified="201309270950" changecount="11">
+<div title="LAMPSetting" creator="YourName" modifier="YourName" created="201512090513" modified="201512090514" changecount="4">
+<pre>!LAMP環境のインストールと設定
+!!LAMPとは
+Linux,Apache,mySQL,PHPの頭文字をとったもの。
+Webサーバ環境として必要なものをまとめてLAMPという。
+Macの場合MAMP,Windowsの場合XAMPというものがある。
+
+!!LAMP環境のインストール
+まずはカタログとRaspberry Pi自体をアップデート
+{{{
+sudo apt-get update
+sudo apt-get upgrade
+}}}
+
+
+</pre>
+</div>
+<div title="MainMenu" creator="leico" modifier="YourName" created="201108040628" modified="201512090504" changecount="12">
 <pre>[[準備から起動まで|RPiGS]]
 [[起動から初期設定|RPiInit]]
 [[ユーザの追加とアクセス権設定|RPiUser]]
 [[pd-extendedインストール|RPiPd-extended]]
 [[4U7Inchディスプレイでの最適化|4UDisplay]]
+[[LAMP環境のインストールと設定|LAMPSetting]]
 ----
 [[GettingStarted]]
 [[このメニューの編集|MainMenu]]
 [[TiddlyWiki書式|WikiStyle]]</pre>
 </div>
-<div title="RPiGS" creator="leico" modifier="leico" created="201306270616" modified="201307051702" changecount="18">
+<div title="RPiGS" creator="leico" modifier="YourName" created="201306270616" modified="201512090513" changecount="21">
 <pre>!準備するものから起動まで
 !!準備するもの
 
