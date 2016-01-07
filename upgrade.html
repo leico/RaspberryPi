@@ -149,7 +149,11 @@ Error message and password prompt
 
 <li>4UDisplay</li>
 
+<li>Apache2Setting</li>
+
 <li>LAMPInstall</li>
+
+<li>LAMPSetting</li>
 
 <li>MainMenu</li>
 
@@ -5905,16 +5909,16 @@ Error message and password prompt
 <div created="20151209060842004" modified="20151209060851143" title="$:/SiteTitle">
 <pre>Raspberry Piの設定</pre>
 </div>
-<div modified="20160105112909925" title="$:/state/showeditpreview">
+<div modified="20160107094641156" title="$:/state/showeditpreview">
 <pre>yes</pre>
 </div>
 <div modified="20151209084027424" title="$:/state/tab-1749438307">
 <pre>$:/core/ui/ControlPanel/Appearance</pre>
 </div>
-<div modified="20151209084511304" title="$:/state/tab/sidebar--1835078512">
+<div modified="20160107030043096" title="$:/state/tab/sidebar--1835078512">
 <pre>$:/core/ui/SideBar/Recent</pre>
 </div>
-<div list="MainMenu LAMPInstall" title="$:/StoryList">
+<div list="MainMenu LAMPSetting Apache2Setting" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -6064,7 +6068,147 @@ hdmi_mode=87
 hdmi_ignore_edid=0xa5000080
 ```</pre>
 </div>
-<div changecount="4" created="20151209051300000" creator="YourName" modified="20160105114632831" modifier="YourName" tags="[[Raspberry Pi]]" title="LAMPInstall" type="text/vnd.tiddlywiki">
+<div created="20160107030033482" modified="20160107094710716" title="Apache2Setting">
+<pre>!Apache2の設定
+
+参考:
+
+*[[Apache2.2でウェブサーバ (その1 基本設定)|http://server.riopi.net/apache-1.html]]
+*[[Apache2 Debian conf どこになにを置けばいいのか|http://qiita.com/hikachan/items/3801c8f1c088817d6d53]]
+
+!!実行ユーザ、グループの確認
+``/etc/apache2/apache2.conf``に記述されているが、
+
+```
+#These need to be set in /etc/apache2/envvars
+User ${APACHE_RUN_USER}
+Group ${APACHE_RUN_GROUP}
+```
+
+となっている。環境変数を利用して記述してある。
+環境変数の設定をどうやらenvvarsで行っているため``/etc/apache2/envvars``を確認する。
+
+```
+export APACHE_RUN_USER=www-data
+export APACHE_RUN_GROUP=www-data
+```
+
+こうなっているはず。piとかになっていたら修正する。絶対にログインで使うユーザ、グループにしない。
+
+!!charsetの確認
+``/etc/apache2/conf-enabled/charset.conf -&gt; /etc/apache2/conf-available/charset.conf``に記述してある。
+''UTF-8''であれば問題ない。
+
+```
+#AddDefaultCharset UTF-8
+```
+
+通例として設定ファイルのコメントで''#''の後にスペースが入っているものはコメント、
+スペースがない場合はデフォルトの値を示す。
+
+!!ポートの確認
+``/etc/apache2/ports.conf``に記述してある。
+SSL他モジュールによる設定があるが、とりあえず80番(well known port:http)が設定されていればよい。
+
+```
+Listen 80
+```
+
+!!ヴァーチャルホスト設定
+
+!!!ヴァーチャルホストとは
+一台のコンピュータで複数のサイトを動かすこと。一つサーバでいくつものWebサーバが動いている状態。
+
+複数のIPアドレスを用いて動かす方式と複数のドメインで動かす方式がある。Apache2単体の場合は複数のドメインで運用するヴァーチャルホストが利用できる。
+
+ヴァーチャルホストのメリットは複数のサイトが運用できる、すなわちただ単に複数の別のWebサイトが存在しているだけではなく、リリースした後のテスト環境を作ったり、バックアップでサイトを走らせるといったことが可能。
+
+ついでに間違えた後最初からっていうのもヴァーチャルホストでやれば簡単？
+
+!!!設定ファイルの作成
+``/etc/apache2/sites-available/000-default.conf``をコピーして変更する。
+設定ファイルはdefaultと同じくsites-availableに入れ、後で有効化する。
+設定ファイルのファイル名は若い方が優先度高い。
+
+```
+sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-site.conf
+```
+
+000-site.confを編集する
+
+```
+NameVirtualHost * 
+
+&lt;VirtualHost *:80&gt;
+	# The ServerName directive sets the request scheme, hostname and port that
+	# the server uses to identify itself. This is used when creating
+	# redirection URLs. In the context of virtual hosts, the ServerName
+	# specifies what hostname must appear in the request's Host: header to
+	# match this virtual host. For the default virtual host (this file) this
+	# value is not decisive as it is used as a last resort host regardless.
+	# However, you must set it for any further virtual host explicitly.
+	#ServerName www.example.com
+	ServerName localhost
+
+	ServerAdmin webmaster@localhost
+	DocumentRoot /var/www/site
+
+	# Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+	# error, crit, alert, emerg.
+	# It is also possible to configure the loglevel for particular
+	# modules, e.g.
+	#LogLevel info ssl:warn
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+	# For most configuration files from conf-available/, which are
+	# enabled or disabled at a global level, it is possible to
+	# include a line for only one particular virtual host. For example the
+	# following line enables the CGI configuration for this host only
+	# after it has been globally disabled with &quot;a2disconf&quot;.
+	#Include conf-available/serve-cgi-bin.conf
+&lt;/VirtualHost&gt;
+
+# vim: syntax=apache ts=4 sw=4 sts=4 sr noet
+
+```
+
+設定したようにディレクトリが必要。
+
+```
+sudo mkdir /var/www/site
+```
+
+!!!設定の有効、無効化
+
+設定の有効化には``a2ensite``、無効化には``a2dissite``を用いる。双方管理者権限が必要
+
+```
+$ sudo a2ensite 
+Your choices are: 000-default 000-site default-ssl
+Which site(s) do you want to enable (wildcards ok)?
+000-site
+Enabling site 000-site.
+To activate the new configuration, you need to run:
+  service apache2 reload
+$ sudo a2dissite 
+Your choices are: 000-default 000-site
+Which site(s) do you want to disable (wildcards ok)?
+000-default
+Site 000-default disabled.
+To activate the new configuration, you need to run:
+  service apache2 reload
+```
+
+ここまでできたらapache2を再起動させる。
+
+```
+sudo /etc/init.d/apache2 restart
+```
+</pre>
+</div>
+<div changecount="4" created="20151209051300000" creator="YourName" modified="20160107031523167" modifier="YourName" tags="[[Raspberry Pi]]" title="LAMPInstall" type="text/vnd.tiddlywiki">
 <pre>!LAMP環境のインストールと設定
 !!LAMPとは
 Linux,Apache,mySQL,PHPの頭文字をとったもの。
@@ -6125,8 +6269,10 @@ http://localhost/
 http://localhost/phpmyadmin/
 にアクセスでき、ログインできるか確認する。
 
-|ユーザ名|root|
-|パスワード|先ほど設定したもの|
+;ユーザ名
+:root
+;パスワード
+:先ほど設定したもの
 
 [img[img/LAMPInstall/07.png]]
 
@@ -6147,7 +6293,13 @@ phpinfo();
 
 [img[img/LAMPInstall/09.png]]</pre>
 </div>
-<div changecount="12" created="20110804062800000" creator="leico" modified="20160105114722771" modifier="YourName" title="MainMenu" type="text/vnd.tiddlywiki">
+<div created="20160107025901222" modified="20160107030102853" title="LAMPSetting">
+<pre>!LAMPのインストールと設定
+
+* [[LAMPのインストール|LAMPInstall]]
+* [[Apache2の設定|Apache2Setting]]</pre>
+</div>
+<div changecount="12" created="20110804062800000" creator="leico" modified="20160107025851628" modifier="YourName" title="MainMenu" type="text/vnd.tiddlywiki">
 <pre>[[準備から起動まで|RPiGS]]
 
 [[起動から初期設定|RPiInit]]
@@ -6160,7 +6312,7 @@ phpinfo();
 
 [[4U7Inchディスプレイでの最適化|4UDisplay]]
 
-[[LAMP環境のインストールと設定|LAMPInstall]]
+[[LAMP環境のインストールと設定|LAMPSetting]]
 
 ----
 
@@ -6283,7 +6435,7 @@ nowの部分は何分後とか何時にとかを設定出来る。
 
 参考：[[Raspberry PiへのOSインストール手順 ddコマンド編|http://veryberrypi.wordpress.com/2013/05/04/raspberry-pi%E3%81%B8%E3%81%AEos%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%81%AE%E6%89%8B%E9%A0%86-dd%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89%E7%B7%A8/]]</pre>
 </div>
-<div changecount="12" created="20130627074300000" creator="leico" modified="20151209083405127" modifier="leico" tags="[[Raspberry Pi]]" title="RPiInit" type="text/vnd.tiddlywiki">
+<div changecount="12" created="20130627074300000" creator="leico" modified="20160107031736123" modifier="leico" tags="[[Raspberry Pi]]" title="RPiInit" type="text/vnd.tiddlywiki">
 <pre>!起動から初期設定
 !!起動
 SDを読んでいると文字が流れ続けて青バックの画面にいく．
@@ -6325,8 +6477,10 @@ password : ****
 ```
 の
 
-|User|pi|
-|****|raspberry|
+; login
+: pi
+; password
+: raspberry
 
 を入力する．
 passwordは画面に表示されないが，ちゃんと入力されているので大丈夫．
