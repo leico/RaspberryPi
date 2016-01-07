@@ -149,7 +149,7 @@ Error message and password prompt
 
 <li>4UDisplay</li>
 
-<li>LAMPSetting</li>
+<li>LAMPInstall</li>
 
 <li>MainMenu</li>
 
@@ -5905,7 +5905,7 @@ Error message and password prompt
 <div created="20151209060842004" modified="20151209060851143" title="$:/SiteTitle">
 <pre>Raspberry Piの設定</pre>
 </div>
-<div modified="20151209083541313" title="$:/state/showeditpreview">
+<div modified="20160105112909925" title="$:/state/showeditpreview">
 <pre>yes</pre>
 </div>
 <div modified="20151209084027424" title="$:/state/tab-1749438307">
@@ -5914,7 +5914,7 @@ Error message and password prompt
 <div modified="20151209084511304" title="$:/state/tab/sidebar--1835078512">
 <pre>$:/core/ui/SideBar/Recent</pre>
 </div>
-<div list="MainMenu RPiRepository" title="$:/StoryList">
+<div list="MainMenu LAMPInstall" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -6042,7 +6042,7 @@ Error message and password prompt
     }
 }</pre>
 </div>
-<div changecount="1" created="20130927095300000" creator="YourName" modifier="YourName" title="4UDisplay" type="text/x-tiddlywiki">
+<div changecount="1" created="20130927095300000" creator="YourName" modified="20160105085904580" modifier="YourName" title="4UDisplay" type="text/vnd.tiddlywiki">
 <pre>!4U7Inchディスプレイでの最適化
 
 参照元
@@ -6051,19 +6051,20 @@ http://yuki-lab.jp/hw/rasp-monitor/
 そのままでは文字がとても見難いので、解像度設定などを最適化する。
 
 !!config.txtを編集する
-場所は''/boot/config.txt''。
+場所は``/boot/config.txt``。
 以下の項目をファイル最後尾に追加する。
 基本、全ての行がコメントアウトされているようなので、
 どこに書いても動くはず。
-{{{
+
+```
 #1024 x 600 60Hz
 hdmi_cvt=1024 600 60 3 0 0 0
 hdmi_group=2
 hdmi_mode=87
 hdmi_ignore_edid=0xa5000080
-}}}</pre>
+```</pre>
 </div>
-<div changecount="4" created="20151209051300000" creator="YourName" modified="20151209083340803" modifier="YourName" tags="[[Raspberry Pi]]" title="LAMPSetting" type="text/vnd.tiddlywiki">
+<div changecount="4" created="20151209051300000" creator="YourName" modified="20160105114632831" modifier="YourName" tags="[[Raspberry Pi]]" title="LAMPInstall" type="text/vnd.tiddlywiki">
 <pre>!LAMP環境のインストールと設定
 !!LAMPとは
 Linux,Apache,mySQL,PHPの頭文字をとったもの。
@@ -6071,6 +6072,9 @@ Webサーバ環境として必要なものをまとめてLAMPという。
 Macの場合MAMP,Windowsの場合XAMPというものがある。
 
 !!LAMP環境のインストール
+参考
+[[Raspberry Pi 2 (Raspbian) で LAMP 環境を構築する|http://qiita.com/bird_nitryn/items/e373fe077139b39ef609]]
+
 まずはカタログとRaspberry Pi自体をアップデート
 
 ```
@@ -6082,9 +6086,68 @@ sudo apt-get upgrade
 
 ```
 sudo apt-get install -y apache2 php5 mysql-server phpmyadmin
-```</pre>
+```
+
+途中何度か青画面になって設定を訊かれる。
+
+[img[img/LAMPInstall/01.png]]
+
+データベースmySQLのrootユーザのパスワードを入力する。
+
+[img[img/LAMPInstall/02.png]]
+
+もう一度同じパスワードを入力する。
+
+[img[img/LAMPInstall/03.png]]
+
+phpmyadminの設定。どのWebサーバを利用するかを選択する。apache2を導入しているのでapache2の部分を選択する。
+選択方法は``スペース``。''Ok''に移動するのは``Tab``。
+
+[img[img/LAMPInstall/04.png]]
+
+phpmyadminのデータベース設定。yesを押して次へ
+
+[img[img/LAMPInstall/05.png]]
+
+mySQLのパスワードを入力。次にphpmyadminにログインするためのパスワードを2回訊かれる。
+
+ここまででインストールは完了する。
+
+!!インストールのチェック
+http://localhost/
+
+にアクセスできるか確認する。
+
+[img[img/LAMPInstall/06.png]]
+
+この画面が出れば成功している。
+
+http://localhost/phpmyadmin/
+にアクセスでき、ログインできるか確認する。
+
+|ユーザ名|root|
+|パスワード|先ほど設定したもの|
+
+[img[img/LAMPInstall/07.png]]
+
+アクセスした際の画面
+
+[img[img/LAMPInstall/08.png]]
+
+ログインできるとこの画面になる
+
+最後に`/var/www/html/phpinfo.php`を作り、phpが動いているか確認する。
+`phpinfo.php`の中身は
+
+```
+&lt;?php
+phpinfo();
+?&gt;
+```
+
+[img[img/LAMPInstall/09.png]]</pre>
 </div>
-<div changecount="12" created="20110804062800000" creator="leico" modified="20151209084635003" modifier="YourName" title="MainMenu" type="text/vnd.tiddlywiki">
+<div changecount="12" created="20110804062800000" creator="leico" modified="20160105114722771" modifier="YourName" title="MainMenu" type="text/vnd.tiddlywiki">
 <pre>[[準備から起動まで|RPiGS]]
 
 [[起動から初期設定|RPiInit]]
@@ -6097,7 +6160,7 @@ sudo apt-get install -y apache2 php5 mysql-server phpmyadmin
 
 [[4U7Inchディスプレイでの最適化|4UDisplay]]
 
-[[LAMP環境のインストールと設定|LAMPSetting]]
+[[LAMP環境のインストールと設定|LAMPInstall]]
 
 ----
 
@@ -6310,7 +6373,7 @@ nanoは普通にカーソルで移動，終了するには`Ctrl+x`，
 
 </pre>
 </div>
-<div changecount="5" created="20130705164600000" creator="leico" modified="20151209083351007" modifier="YourName" tags="[[Raspberry Pi]]" title="RPiPd-extended" type="text/vnd.tiddlywiki">
+<div changecount="5" created="20130705164600000" creator="leico" modified="20160105085844088" modifier="YourName" tags="[[Raspberry Pi]]" title="RPiPd-extended" type="text/vnd.tiddlywiki">
 <pre>!Pd-extendedインストール
 
 何もせずの状態では~Pd-Vanillaしかインストール出来ないので、Pd-extendedをインストール出来る様にする。
