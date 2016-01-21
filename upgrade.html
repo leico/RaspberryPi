@@ -131,6 +131,8 @@ Error message and password prompt
 
 <li>$:/state/showeditpreview</li>
 
+<li>$:/state/sidebar</li>
+
 <li>$:/state/tab-1749438307</li>
 
 <li>$:/state/tab/sidebar--1835078512</li>
@@ -151,11 +153,21 @@ Error message and password prompt
 
 <li>Apache2Setting</li>
 
+<li>ArduinoProgram</li>
+
+<li>IoTLAMPSetting</li>
+
+<li>IoTSetting</li>
+
 <li>LAMPInstall</li>
 
-<li>LAMPSetting</li>
-
 <li>MainMenu</li>
+
+<li>PHP-SerialSetting</li>
+
+<li>PHPUserStream</li>
+
+<li>RaspberryPiProgram</li>
 
 <li>RPiGS</li>
 
@@ -166,6 +178,14 @@ Error message and password prompt
 <li>RPiRepository</li>
 
 <li>RPiUser</li>
+
+<li>Twitter-PHPSetting</li>
+
+<li>TwitterStreamingAPI</li>
+
+<li>TwitterStreamingAPIConfig</li>
+
+<li>WWWDataSetting</li>
 
 </ul>
 </p>
@@ -5912,13 +5932,16 @@ Error message and password prompt
 <div modified="20160107094641156" title="$:/state/showeditpreview">
 <pre>yes</pre>
 </div>
+<div modified="20160121101358202" title="$:/state/sidebar">
+<pre>no</pre>
+</div>
 <div modified="20151209084027424" title="$:/state/tab-1749438307">
 <pre>$:/core/ui/ControlPanel/Appearance</pre>
 </div>
 <div modified="20160107030043096" title="$:/state/tab/sidebar--1835078512">
 <pre>$:/core/ui/SideBar/Recent</pre>
 </div>
-<div list="MainMenu LAMPSetting Apache2Setting" title="$:/StoryList">
+<div list="MainMenu IoTSetting" title="$:/StoryList">
 <pre></pre>
 </div>
 <div plugin-type="info" title="$:/temp/info-plugin" type="application/json">
@@ -6208,7 +6231,72 @@ sudo /etc/init.d/apache2 restart
 ```
 </pre>
 </div>
-<div changecount="4" created="20151209051300000" creator="YourName" modified="20160107031523167" modifier="YourName" tags="[[Raspberry Pi]]" title="LAMPInstall" type="text/vnd.tiddlywiki">
+<div created="20160121104111462" modified="20160121104555962" title="ArduinoProgram">
+<pre>!Arduino側のプログラム
+
+最後にArduinoでLEDを制御するプログラムである。
+
+```
+const int LED = 13;
+
+void setup() {
+ Serial.begin(9600);
+ pinMode(LED, OUTPUT);
+ analogWrite(LED, 0);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+  int num = Serial.available();
+  if(num){
+    int val = Serial.read();
+    if     (val == 'a') digitalWrite(LED, HIGH);
+    else if(val == 'b') digitalWrite(LED, LOW);
+    
+    for(-- num ; num &gt; 0 ; -- num) Serial.read();
+  }
+
+}
+```
+
+PHP側から送られてくるデータが1文字だけなのか確信が持てないため、受信バッファがある場合、1文字したらバッファをクリアするまで読み込んでいる。</pre>
+</div>
+<div created="20160107025901222" modified="20160121084822953" title="IoTLAMPSetting">
+<pre>!LAMPのインストールと設定
+
+* [[LAMPのインストール|LAMPInstall]]
+* [[Apache2の設定|Apache2Setting]]</pre>
+</div>
+<div created="20160121084612594" modified="20160121104602035" title="IoTSetting">
+<pre>!~IoT勉強会向けの設定
+
+!!LAMPのインストール
+[[LAMP環境のインストールと設定|IoTLAMPSetting]]
+
+!!Twitter Streaming API向けの設定
+[[php.iniの変更|Twitter-PHPSetting]]
+
+!!www-dataの権限変更
+[[www-dataの権限設定|WWWDataSetting]]
+
+!!PHPでSerial通信
+[[PHP-Serialのダウンロード|PHP-SerialSetting]]
+
+!!Twitter ~UserStreamを取得するソースコード
+[[ストリーミングAPIについて|TwitterStreamingAPI]]
+
+[[ストリーミングAPIの利用方法|TwitterStreamingAPIConfig]]
+
+[[PHPでユーザストリームを取得する|PHPUserStream]]
+
+!!Raspberry Pi側のソースコード
+[[Raspberry Pi側のプログラム|RaspberryPiProgram]]
+
+!!Arduino側のソースコード
+[[Arduino側のプログラム|ArduinoProgram]]</pre>
+</div>
+<div changecount="4" created="20151209051300000" creator="YourName" modified="20160121084713240" modifier="YourName" tags="[[Raspberry Pi]]" title="LAMPInstall" type="text/vnd.tiddlywiki">
 <pre>!LAMP環境のインストールと設定
 !!LAMPとは
 Linux,Apache,mySQL,PHPの頭文字をとったもの。
@@ -6293,13 +6381,7 @@ phpinfo();
 
 [img[img/LAMPInstall/09.png]]</pre>
 </div>
-<div created="20160107025901222" modified="20160107030102853" title="LAMPSetting">
-<pre>!LAMPのインストールと設定
-
-* [[LAMPのインストール|LAMPInstall]]
-* [[Apache2の設定|Apache2Setting]]</pre>
-</div>
-<div changecount="12" created="20110804062800000" creator="leico" modified="20160107025851628" modifier="YourName" title="MainMenu" type="text/vnd.tiddlywiki">
+<div changecount="12" created="20110804062800000" creator="leico" modified="20160121084603825" modifier="YourName" title="MainMenu" type="text/vnd.tiddlywiki">
 <pre>[[準備から起動まで|RPiGS]]
 
 [[起動から初期設定|RPiInit]]
@@ -6312,11 +6394,300 @@ phpinfo();
 
 [[4U7Inchディスプレイでの最適化|4UDisplay]]
 
-[[LAMP環境のインストールと設定|LAMPSetting]]
+[[IoT勉強会用の設定|IoTSetting]]
 
 ----
 
 [[GettingStarted]]</pre>
+</div>
+<div created="20160121090842189" modified="20160121091614582" title="PHP-SerialSetting">
+<pre>!PHP-Serialを使う
+
+PHPでシリアル通信を実現するライブラリはいくつか存在しているが、githubで公開されており、かつ1ファイル利用するだけ(特にコンパイル等の必要がない)で簡単なので今回はPHP-Serialを採用した。
+
+!!ダウンロード&amp;インストール
+https://github.com/Xowap/PHP-Serial
+
+このリンクから``Download ZIP``か``git clone``コマンドでソースをダウンロードする。
+ダウンロード後
+
+```
+cd PHP-Serial-develop
+sudo cp src/PhpSerial.php /var/www/site/.
+```
+
+とWebで公開されている場所に移動する。</pre>
+</div>
+<div created="20160121101509594" modified="20160121103221953" title="PHPUserStream">
+<pre>!PHPでユーザーストリームを取得する。
+
+OAuth認証に必要な情報を手に入れたので、この情報を使って自分のタイムラインの情報を取得する。
+データを取得するアドレスは
+
+https://userstream.twitter.com/1.1/user.json
+
+.json拡張子の通り、データは全てjson形式で与えられる。jsonからオブジェクトや連想配列に変換したうえで必要な情報を取り出すことになる。
+
+情報を取り出す際、jsonの内容を確認する必要があるだろう。その時はjson editor をつかうと成形してくれるのでデータが見やすくなる。
+
+http://www.jsoneditoronline.org/
+
+[img[img/PHPUserStream/01.png]]
+
+また、データが途中で途切れる場合がある。RESTに沿って送られてくるため、データの途中か末尾に``\r\n``が含まれているかでデータの区切りを判断する。
+
+!!ソースコード
+とりあえずユーザーストリームを取得してjsonを出力するソースコード
+
+参考:
+
+*[[[PHP] ライブラリに頼らないTwitterAPI入門|http://qiita.com/mpyw/items/b59d3ce03f08be126000]]
+*[[【php】twitter Streaming API の statuses/filter を試す|https://www.softel.co.jp/blogs/tech/archives/3929]]
+
+
+```
+&lt;?php
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+require 'PhpSerial.php';
+
+$consumer_key       = 'コンシュマーキー';
+$consumer_secret    = 'コンシュマーシークレット';
+$oauth_token        = 'アクセストークン';
+$oauth_token_secret = 'アクセストークンシークレット';
+
+$url    = 'https://userstream.twitter.com/1.1/user.json';
+$method = 'GET';
+
+
+$oauth_param = array(
+    'oauth_consumer_key'     =&gt; $consumer_key
+  , 'oauth_nonce'            =&gt; md5(mt_rand())
+  , 'oauth_signature_method' =&gt; 'HMAC-SHA1'
+  , 'oauth_timestamp'        =&gt; time()
+  , 'oauth_token'            =&gt; $oauth_token
+  , 'oauth_version'          =&gt; '1.0'
+);
+
+
+$base = $oauth_param;
+
+uksort($base,'strnatcmp');
+
+
+$base = implode(
+    '&amp;'
+  , array_map(
+      'rawurlencode'
+    , array(
+        $method
+      , $url
+      , http_build_query($base, '', '&amp;', PHP_QUERY_RFC3986)
+    )
+  )
+);
+
+
+$key = implode(
+    '&amp;'
+  , array_map(
+      'rawurlencode'
+    , array(
+        $consumer_secret
+      , $oauth_token_secret
+    )
+  )
+);
+
+
+$oauth_param['oauth_signature'] = base64_encode( hash_hmac('sha1', $base, $key, true) );
+
+$header = 'Authorization: OAuth ' . http_build_query($oauth_param, '', ',', PHP_QUERY_RFC3986);
+
+$callback = function($ch, $str){
+
+  static $data = '';
+
+  $data .= $str;
+
+  if(strpos($data, &quot;\r\n&quot;) !== false){
+    echo $data;
+    flush();
+    $data = '';
+  }
+
+  return strlen($str);
+};
+
+$ch  = curl_init();
+
+curl_setopt_array(
+    $ch
+  , array(
+      CURLOPT_URL            =&gt; $url
+    , CURLOPT_SSL_VERIFYPEER =&gt; false
+    , CURLOPT_HTTPHEADER     =&gt; array($header)
+    , CURLOPT_ENCODING       =&gt; 'gzip'
+    , CURLOPT_TIMEOUT        =&gt; 0
+    , CURLOPT_WRITEFUNCTION  =&gt; $callback
+    )
+);
+
+curl_exec($ch);
+ 
+?&gt;
+```</pre>
+</div>
+<div created="20160121103255526" modified="20160121104049392" title="RaspberryPiProgram">
+<pre>!PHP-Serialのプログラムと~UserStreamのプログラムを組み合わせる
+
+!!データ構造の設計
+ストリーミングAPIから流れてくるデータは多種多様。どのようなデータだけ利用するか決めておいたほうがよい。
+
+今回は通常のツイートで''/''から始まるツイートはまずないので''/''から始まるツイートを制御信号としている。
+
+LEDをOn/Offするための信号は、''/''の後''a''から始まるツイートをOn、''b''から始まるツイートをOffとした。
+
+;Onの信号
+*``/a``
+*``/aaaa``
+*``/abc``
+*``/apple``
+*などなど
+;Offの信号
+*``/b``
+*``/bar``
+*``/book``
+*``/brahbrah``
+*などなど
+
+シリアルでたくさんデータを流すのも無駄なのでArduinoにはaかbのいずれかを送っている。
+
+!!ソースコード
+
+```
+&lt;?php
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+require 'PhpSerial.php';
+
+$consumer_key       = 'コンシュマーキー';
+$consumer_secret    = 'コンシュマーシークレット';
+$oauth_token        = 'アクセストークン';
+$oauth_token_secret = 'アクセストークンシークレット';
+
+$url    = 'https://userstream.twitter.com/1.1/user.json';
+$method = 'GET';
+
+
+$oauth_param = array(
+    'oauth_consumer_key'     =&gt; $consumer_key
+  , 'oauth_nonce'            =&gt; md5(mt_rand())
+  , 'oauth_signature_method' =&gt; 'HMAC-SHA1'
+  , 'oauth_timestamp'        =&gt; time()
+  , 'oauth_token'            =&gt; $oauth_token
+  , 'oauth_version'          =&gt; '1.0'
+);
+
+
+$base = $oauth_param;
+
+uksort($base,'strnatcmp');
+
+
+$base = implode(
+    '&amp;'
+  , array_map(
+      'rawurlencode'
+    , array(
+        $method
+      , $url
+      , http_build_query($base, '', '&amp;', PHP_QUERY_RFC3986)
+    )
+  )
+);
+
+
+$key = implode(
+    '&amp;'
+  , array_map(
+      'rawurlencode'
+    , array(
+        $consumer_secret
+      , $oauth_token_secret
+    )
+  )
+);
+
+
+$oauth_param['oauth_signature'] = base64_encode( hash_hmac('sha1', $base, $key, true) );
+
+$header = 'Authorization: OAuth ' . http_build_query($oauth_param, '', ',', PHP_QUERY_RFC3986);
+
+$callback = function($ch, $str){
+
+  static $data = '';
+
+  $data .= $str;
+  echo $data;
+  flush();
+
+  if(strpos($data, &quot;\r\n&quot;) !== false){
+
+    $obj = json_decode($data);
+
+    if(isset($obj -&gt; {'text'})){
+
+      if($obj -&gt; {'text'}[0] == '/'){
+
+        $value = substr($obj -&gt; {'text'}, 1);
+        if($value[0] == 'a' || $value[0] == 'b'){
+
+          $serial = new PhpSerial;
+          $serial -&gt; deviceSet(&quot;/dev/ttyUSB0&quot;);
+          $serial -&gt; confBaudRate(9600);
+          $serial -&gt; confParity('none');
+          $serial -&gt; confCharacterLength(8);
+          $serial -&gt; confStopBits(1);
+          $serial -&gt; confFlowControl('none');
+
+          $serial -&gt; deviceOpen();
+          $serial -&gt; sendMessage( substr($value, 0, 1) );
+          $serial -&gt; deviceClose();
+        }
+
+        
+      }
+    }
+    $data = '';
+  }
+
+  return strlen($str);
+};
+
+$ch  = curl_init();
+
+curl_setopt_array(
+    $ch
+  , array(
+      CURLOPT_URL            =&gt; $url
+    , CURLOPT_SSL_VERIFYPEER =&gt; false
+    , CURLOPT_HTTPHEADER     =&gt; array($header)
+    , CURLOPT_ENCODING       =&gt; 'gzip'
+    , CURLOPT_TIMEOUT        =&gt; 0
+    , CURLOPT_WRITEFUNCTION  =&gt; $callback
+    )
+);
+
+curl_exec($ch);
+ 
+?&gt;
+
+```</pre>
 </div>
 <div changecount="21" created="20130627061600000" creator="leico" modified="20151209083357267" modifier="YourName" tags="[[Raspberry Pi]]" title="RPiGS" type="text/vnd.tiddlywiki">
 <pre>!準備するものから起動まで
@@ -6762,6 +7133,108 @@ sudo deluser pi
 ```
 
 これで大穴ふさがった。</pre>
+</div>
+<div created="20160118122527631" modified="20160121084909467" title="Twitter-PHPSetting">
+<pre>!Twitter Streaming APIのための設定
+
+
+!!php.iniの設定
+参考:http://stackoverflow.com/a/4978642
+
+Raspberry Piでインストールした場合、output_bufferingの値が4096になっており、リアルタイムにデータを表示できない。
+
+リアルタイムに表示してデバッグするために、``/etc/php5/apache2/php.ini``を書き換える
+
+```
+;output_buffering = 4096
+output_buffering = Off
+```</pre>
+</div>
+<div created="20160121091635884" modified="20160121093125339" title="TwitterStreamingAPI">
+<pre>!~UserSteramを取得する
+
+!!Twitter Streaming APIとは
+Twitter社が提供しているAPIの一つ。過去のデータを取得することはできないが、今現在投稿されているデータをほぼリアルタイムに取得することができる。
+
+!!Twitter Streaming APIの種類
+
+Twitter Streaming APIには3つ種類がある。
+
+;User Streams
+:単一ユーザのデータを取得することができる。
+;;userstream
+:OAuth認証したユーザのタイムラインをリアルタイムに取得する。
+;Site Streams
+:複数ユーザのデータを取得することができるが、ホワイトリスト式に許可された企業や開発者のみしか使えない。
+;Public Streams
+:Twitter全体のデータを取得できる。
+;;firehose
+:消火栓？　リアルタイムの全データが流れてくる。これも特定の企業等許可された人しか手に入らない。
+;;sample
+:全Twitterデータの1％がリアルタイムに取得できる。
+;;filter
+:こちらが指定するフィルターに該当するツイートのみ取得することができる。
+
+今回は個人のタイムラインを追うuserstreamを使う。
+</pre>
+</div>
+<div created="20160121093618703" modified="20160121101342525" title="TwitterStreamingAPIConfig">
+<pre>!ストリーミングAPIの利用方法
+まずはtwitterにログインする。
+
+https://twitter.com/
+
+その後以下のページにアクセスする。
+
+https://apps.twitter.com/
+
+[img[img/TwitterStreamingAPIConfig/01.png]]
+
+画面右上の''Create New App''をクリックする。
+
+[img[img/TwitterStreamingAPIConfig/02.png]]
+
+必要な情報を入力する。アプリケーション名、説明、Webサイト、Callback URL全ててきとうで大丈夫。アプリケーション名がほかの人が作っているものと被ると作れない。
+
+[img[img/TwitterStreamingAPIConfig/03.png]]
+
+こんな設定でも全然大丈夫。
+
+[img[img/TwitterStreamingAPIConfig/04.png]]
+
+Applicationができるとこの画面になる。
+
+これからOAuth認証に必要なパスワード等を取得するためこの画面から画面中央辺りの''keys and access tokens''タブを選択する。
+
+[img[img/TwitterStreamingAPIConfig/05.png]]
+
+この画面に移動する。OAuthにはまだ情報が足りない。画面下のCreate my access tokenを押す。
+
+[img[img/TwitterStreamingAPIConfig/06.png]]
+
+これで全て揃った。
+必要な情報は
+
+* Consumer Key
+* Consumer Secret
+* Access Token
+* Access Token Secret
+
+の4つ</pre>
+</div>
+<div created="20160121090244973" modified="20160121090830081" title="WWWDataSetting">
+<pre>!www-dataの権限変更
+今の状態ではWebプログラムからArduino等とシリアル通信ができないため、USBポートが使えるように``www-data``を``dialout``グループに追加する。
+
+```
+sudo usermod -a -G dialout www-data
+```
+
+ユーザ``www-data``を``dialout``のグループに追加している。``-a``をつけないとwww-dataがdialoutグループのみの所属になり、Webの挙動がおかしくなるので注意。
+
+設定できたら再起動する。
+変更されているか``/etc/group``を確認してもよい。
+</pre>
 </div>
 
 </div>
